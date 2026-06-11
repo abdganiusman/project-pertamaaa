@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Manajemen Stok Ayam</title>
+    <style>
+        /* ==========================================
+           CSS UTAMA & LAYOUT 
+           ========================================== */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #2c3e50;
+            color: white;
+            position: relative;
+            margin-top: 40px;
+            clear: both;
+            width: 100%;
+        }
+
+        /* Kelas untuk menyembunyikan halaman */
+        .hidden {
+            display: none !important;
+        }
+
+        /* ==========================================
+           CSS HALAMAN LOGIN 
+           ========================================== */
+        .login-wrapper {
+            background: linear-gradient(135deg, #1abc9c, #2c3e50);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            margin-top: 0;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #1abc9c;
+            outline: none;
+        }
+
+        /* ==========================================
+           CSS HALAMAN UTAMA (STOK AYAM) 
+           ========================================== */
+        .main-wrapper {
+            padding-bottom: 40px;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        /* Panel Info Admin & Tanggal */
+        .info-panel {
+            display: flex;
+            justify-content: space-between;
+            background-color: #ecf0f1;
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .container h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #1abc9c;
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid #dddddd;
+        }
+
+        th {
+            background-color: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: center;
+        }
+
+        td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Desain Baris Total */
+        .row-total {
+            background-color: #eaeded !important;
+            font-weight: bold;
+        }
+
+        /* Grid Form Input */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .form-grup {
+            text-align: left;
+        }
+
+        .form-grup-full {
+            grid-column: span 3;
+            text-align: left;
+        }
+
+        .form-grup label, .form-grup-full label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-grup select, .form-grup input, .form-grup-full input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* Tombol-Tombol */
+        .aksi-tombol {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #1abc9c, #2c3e50);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            opacity: 0.9;
+        }
+
+        .btn-utama {
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin: 5px;
+        }
+
+        .btn-utama:hover {
+            background-color: #16a085;
+        }
+
+        .btn-rekam {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin: 5px;
+        }
+
+        .btn-rekam:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-keluar {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin: 5px;
+        }
+
+        .btn-keluar:hover {
+            background-color: #c0392b;
+        }
+
+        /* Tombol Hapus Baris Tabel */
+        .btn-hapus {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-hapus:hover {
+            background-color: #c0392b;
+        }
+
+        /* Gaya Khusus Tabel Riwayat */
+        .tabel-riwayat th {
+            background-color: #16a085;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="pageLogin" class="login-wrapper">
+        <div class="login-container">
+            <h2>Masuk Akun</h2>
+            <form id="loginForm" onsubmit="validasiLogin(event)">
+                <div class="input-group">
+                    <label for="username">Username atau Email</label>
+                    <input type="text" id="username" placeholder="Masukkan username Anda" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Kata Sandi</label>
+                    <input type="password" id="password" placeholder="Masukkan kata sandi" required>
+                </div>
+                <button type="submit" class="btn-login">Masuk</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="pageUtama" class="main-wrapper hidden">
+        <header>
+            <h1>Sistem Manajemen Stok Ayam</h1>
+        </header>
+
+        <div class="container">
+            <div class="info-panel">
+                <div>Nama Admin: <span id="displayAdmin">Nama Admin</span></div>
+                <div>Tanggal Kerja: <span id="displayTanggal">--/--/----</span></div>
+            </div>
+
+            <h2>Daftar Stok Ayam Saat Ini (Stok 1 - 8)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Kelompok / Urutan Stok</th>
+                        <th>Ayam Hidup (Ekor)</th>
+                        <th>Ayam Mati (Ekor)</th>
+                        <th>Jumlah Total (Ekor)</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="tabel-stok">
+                    <tr>
+                        <td>Stok Kelompok Ke-1</td>
+                        <td id="hidup-stok1">0</td>
+                        <td id="mati-stok1">0</td>
+                        <td id="total-stok1">0</td>
+                        <td><button class="btn-hapus" onclick="hapusStok('stok1')">🗑️ Hapus</button></td>
+                    </tr>
+                    <tr>
+                        <td>Stok Kelompok Ke-2</td>
+                        <td id="hidup-stok2">0</td>
+                        <td id="mati-stok2">0</td>
+                        <td id="total-stok2">0</td>
+                        <td><button class="btn-hapus" onclick="hapusStok('stok2')">🗑️ Hapus</button></td>
+                    </tr>
+                    <tr>
+                        <td>Stok Kelompok Ke-3</td>
+                        <td id="hidup-stok3">0</td>
+                        <td id="mati-stok3">0</td>
+                        <td id="total-stok3">0</td>
+                        <td><button class="btn-hapus" onclick="hapusStok('stok3')">🗑️ Hapus</button></td>
+                    </tr>
+                    <tr>
+                        <td>Stok Kelompok Ke-4</td>
+                        <td id="hidup-stok4">0</td>
+                        <td id="mati-stok4">0</td>
+                        <td id="total-stok4">0</td>
+                        <td><button class="btn-hapus" onclick="hapusStok('stok4')">🗑️ Hapus</button></td>
+                    </tr>
+                     <tr>
+                        <td>Stok Kelompok Ke-5</td>
+                        <td id="hidup-stok5">0</td>
+                        <td id="mati-stok5">0</td>
+                        <td id="total-stok5">0</td>
+                        <td><button class="btn-hapus" onclick="hapusStok('stok5')">🗑️ Hapus</button></td>
+                    </tr>
+                     <tr>
+                        <td>Stok Kelompok Ke-6</td>
+                        <td id="hidup-stok6">0</td>
+                        <td id="mati-stok6">0</td>
+                        <td id="total-stok6">0</td>
+                        <td><button class="btn-hapus" onclick="hapusStok('stok6')">🗑️ Hapus</button></td>
+                    </tr>
+                     <tr>
+                        <td>Stok Kelompok Ke-7</td>
+                        <td id="hidup-stok7">0</td>
+                        <td id="mati-stok7">0</td>
+                        <td id="total-stok7">0</td>
+                        <td><button class="btn-hapus" onclick="hapusStok('stok7')">🗑️ Hapus</button></td>
+                    </tr>
+                     <tr>
+                        <td>Stok Kelompok Ke-8</td>
+                        <td id="hidup-stok8">0</td>
+                        <td id="mati-stok8">0</td>
+                        <td id="total-stok8">0</td>
+                        <td><button class="btn-hapus" onclick="hapusStok('stok8')">🗑️ Hapus</button></td>
+                    </tr>
+                    <tr class="row-total">
+                        <td>TOTAL KESELURUHAN (1-8)</td>
+                        <td id="grand-hidup">0</td>
+                        <td id="grand-mati">0</td>
+                        <td id="grand-total">0</td>
+                        <td>--</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Update / Tambah Data Stok Ayam</h2>
+            
+            <div class="form-grup-full" style="margin-bottom: 15px;">
+                <label for="pilih-kelompok">Pilih Urutan Kelompok:</label>
+                <select id="pilih-kelompok">
+                    <option value="stok1">Stok Kelompok Ke-1</option>
+                    <option value="stok2">Stok Kelompok Ke-2</option>
+                    <option value="stok3">Stok Kelompok Ke-3</option>
+                    <option value="stok4">Stok Kelompok Ke-4</option>
+                    <option value="stok5">Stok Kelompok Ke-5</option>
+                    <option value="stok6">Stok Kelompok Ke-6</option>
+                    <option value="stok7">Stok Kelompok Ke-7</option>
+                    <option value="stok8">Stok Kelompok Ke-8</option>
+                </select>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-grup">
+                    <label for="jumlah-hidup">AYAM YANG HIDUP:</label>
+                    <input type="number" id="jumlah-hidup" min="0" value="0">
+                </div>
+                <div class="form-grup">
+                    <label for="jumlah-mati">AYAM YANG MATI:</label>
+                    <input type="number" id="jumlah-mati" min="0" value="0">
+                </div>
+                <div class="form-grup">
+                    <label>Total Input Baru:</label>
+                    <input type="text" id="total-input-baru" value="0" disabled style="background-color: #e9ecef; font-weight: bold; text-align: center;">
+                </div>
+            </div>
+
+            <div class="aksi-tombol">
+                <button class="btn-utama" onclick="tambahStok()">Update Stok</button>
+                <button class="btn-rekam" onclick="rekamRiwayatHariIni()">💾 Simpan Riwayat Hari Ini</button>
+                <button class="btn-keluar" onclick="logout()">Keluar / Logout</button>
+            </div>
+
+            <h2>Riwayat Rekaman Jumlah Stok Harian</h2>
+            <table class="tabel-riwayat">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Tanggal Perekaman</th>
+                        <th>Total Ayam Hidup (Ekor)</th>
+                        <th>Total Ayam Mati (Ekor)</th>
+                        <th>Grand Total (Ekor)</th>
+                    </tr>
+                </thead>
+                <tbody id="log-riwayat">
+                    <tr id="riwayat-kosong">
+                        <td colspan="5" style="color: #7f8c8d; font-style: italic;">Belum ada rekaman stok yang disimpan.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Hak Cipta Terpelihara - Manajemen daftar stok ayam.</p>
+        </footer>
+    </div>
+
+
+    <script>
+        let counterRiwayat = 0; // Menghitung index baris riwayat yang tersimpan
+
+        // Fungsi untuk mengambil dan menampilkan tanggal saat ini secara otomatis
+        function tampilkanTanggal() {
+            const sekarang = new Date();
+            const opsiFormat = { year: 'numeric', month: 'long', day: 'numeric' };
+            return sekarang.toLocaleDateString('id-ID', opsiFormat);
+        }
+
+        // Event Listener untuk memantau ketikan angka secara otomatis di kolom total input baru
+        document.getElementById('jumlah-hidup').addEventListener('input', hitungInputBaru);
+        document.getElementById('jumlah-mati').addEventListener('input', hitungInputBaru);
+
+        function hitungInputBaru() {
+            const hidup = parseInt(document.getElementById('jumlah-hidup').value) || 0;
+            const mati = parseInt(document.getElementById('jumlah-mati').value) || 0;
+            document.getElementById('total-input-baru').value = hidup + mati;
+        }
+
+        // Fungsi Proses Login 
+        function validasiLogin(event) {
+            event.preventDefault(); 
+
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            if (user === "admin" && pass === "12345") {
+                alert("Login Berhasil! Selamat datang, " + user);
+                
+                document.getElementById("displayAdmin").innerText = user;
+                document.getElementById("pageLogin").classList.add("hidden");
+                document.getElementById("pageUtama").classList.remove("hidden");
+                
+                document.getElementById('displayTanggal').innerText = tampilkanTanggal();
+                hitungGrandTotal(); 
+            } else {
+                alert("Username atau kata sandi salah! (Gunakan akun: admin / 12345)");
+            }
+        }
+
+        // Fungsi Perhitungan Akumulasi otomatis baris dan kolom tabel
+        function hitungGrandTotal() {
+            let totalHidupSemua = 0;
+            let totalMatiSemua = 0;
+
+            for (let i = 1; i <= 8; i++) {
+                const hidup = parseInt(document.getElementById(`hidup-stok${i}`).innerText) || 0;
+                const mati = parseInt(document.getElementById(`mati-stok${i}`).innerText) || 0;
+                
+                document.getElementById(`total-stok${i}`).innerText = hidup + mati;
+
+                totalHidupSemua += hidup;
+                totalMatiSemua += mati;
+            }
+            
+            document.getElementById("grand-hidup").innerText = totalHidupSemua;
+            document.getElementById("grand-mati").innerText = totalMatiSemua;
+            document.getElementById("grand-total").innerText = totalHidupSemua + totalMatiSemua;
+        }
+
+        // Fungsi Tambah/Update Stok Ayam
+        function tambahStok() {
+            const kelompokTerpilih = document.getElementById("pilih-kelompok").value;
+            
+            const tambahHidup = parseInt(document.getElementById("jumlah-hidup").value) || 0;
+            const tambahMati = parseInt(document.getElementById("jumlah-mati").value) || 0;
+
+            if (tambahHidup < 0 || tambahMati < 0 || (tambahHidup === 0 && tambahMati === 0)) {
+                alert("Silakan masukkan nilai kuantitas data ayam yang valid!");
+                return;
+            }
+
+            let idHidup = "hidup-" + kelompokTerpilih;
+            let idMati = "mati-" + kelompokTerpilih;
+
+            let stokHidupSkrg = parseInt(document.getElementById(idHidup).innerText) || 0;
+            let stokMatiSkrg = parseInt(document.getElementById(idMati).innerText) || 0;
+
+            document.getElementById(idHidup).innerText = stokHidupSkrg + tambahHidup;
+            document.getElementById(idMati).innerText = stokMatiSkrg + tambahMati;
+
+            hitungGrandTotal();
+
+            alert("Data kuantitas stok ayam berhasil diperbarui!");
+            
+            document.getElementById("jumlah-hidup").value = 0;
+            document.getElementById("jumlah-mati").value = 0;
+            document.getElementById("total-input-baru").value = 0;
+        }
+
+        // Fungsi untuk menghapus / reset data per kelompok baris
+        function hapusStok(kelompok) {
+            const namaKelompok = "Stok Kelompok Ke-" + kelompok.replace("stok", "");
+            
+            if (confirm(`Apakah Anda yakin ingin menghapus/mengosongkan data pada ${namaKelompok}?`)) {
+                document.getElementById("hidup-" + kelompok).innerText = 0;
+                document.getElementById("mati-" + kelompok).innerText = 0;
+                document.getElementById("total-" + kelompok).innerText = 0;
+                
+                hitungGrandTotal();
+                alert(`Data ${namaKelompok} berhasil dikosongkan!`);
+            }
+        }
+
+        // FITUR BARU: Fungsi Perekam Akumulasi Total Stok Hari ini (Stok 1 s/d 8)
+        function rekamRiwayatHariIni() {
+            const gHidup = document.getElementById("grand-hidup").innerText;
+            const gMati = document.getElementById("grand-mati").innerText;
+            const gTotal = document.getElementById("grand-total").innerText;
+            const tglSekarang = tampilkanTanggal();
+
+            // Validasi jika data masih kosong/nol semua
+            if (parseInt(gTotal) === 0) {
+                alert("Gagal merekam! Tidak ada data kuantitas ayam (0 ekor) pada daftar stok saat ini.");
+                return;
+            }
+
+            if (confirm(`Apakah Anda ingin menyimpan rekaman total akumulasi stok hari ini (${tglSekarang}) ke dalam log tabel?`)) {
+                const barisKosong = document.getElementById("riwayat-kosong");
+                if (barisKosong) {
+                    barisKosong.remove(); // Menghapus teks "Belum ada rekaman" jika ada entri data pertama masuk
+                }
+
+                counterRiwayat++;
+                const tabelLog = document.getElementById("log-riwayat");
+
+                // Membuat element baris <tr> baru secara dinamis di javascript
+                const barisBaru = document.createElement("tr");
+                barisBaru.innerHTML = `
+                    <td>${counterRiwayat}</td>
+                    <td style="font-weight: bold;">${tglSekarang}</td>
+                    <td style="color: #27ae60; font-weight: bold;">${gHidup}</td>
+                    <td style="color: #c0392b; font-weight: bold;">${gMati}</td>
+                    <td style="background-color: #fcf3cf; font-weight: bold;">${gTotal}</td>
+                `;
+
+                // Memasukkan baris di paling atas riwayat log agar data terbaru selalu terlihat dulu
+                tabelLog.insertBefore(barisBaru, tabelLog.firstChild);
+
+                alert("Berhasil! Rekaman akumulasi jumlah stok hari ini telah disimpan ke tabel riwayat bawah.");
+            }
+        }
+
+        // Fungsi Proses Keluar / Logout
+        function logout() {
+            if(confirm("Apakah kamu yakin ingin keluar?")) {
+                document.getElementById("username").value = "";
+                document.getElementById("password").value = "";
+
+                document.getElementById("pageUtama").classList.add("hidden");
+                document.getElementById("pageLogin").classList.remove("hidden");
+            }
+        }
+    </script>
+
+</body>
+</html>
